@@ -14,6 +14,11 @@ type GetUserByIdResponse struct {
 	CreatedAt string `json:"createdAt"`
 }
 
+type UpdatePasswordRequest struct {
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
+}
+
 type UserHandler struct {
 	service *service.UserService
 }
@@ -43,4 +48,26 @@ func (h *UserHandler) GetUserById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+func (h *UserHandler) UpdatePassword(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "token is required"})
+		return
+	}
+
+	var req UpdatePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := h.service.UpdatePassword(token, req.OldPassword, req.NewPassword)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "password updated successfully"})
 }
