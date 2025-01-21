@@ -24,9 +24,12 @@ func Run() error {
 	defer db.Close()
 
 	authRepo := repository.NewAuthRepository(db)
-	authService := service.NewAuthService(authRepo)
+	userRepo := repository.NewUserRepository(db)
 
-	router := http.SetupRouter(authService)
+	authService := service.NewAuthService(authRepo)
+	userService := service.NewUserService(userRepo)
+
+	router := http.SetupRouter(authService, userService)
 
 	return router.Run("localhost:8080")
 }
