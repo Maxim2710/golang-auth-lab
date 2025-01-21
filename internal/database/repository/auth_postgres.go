@@ -14,7 +14,7 @@ func NewAuthRepository(db *sqlx.DB) *AuthRepository {
 }
 
 func (r *AuthRepository) CreateUser(user *models.User) error {
-	query := `INSERT INTO users VALUES ($1, $2, $3) RETURNING id, created_at`
+	query := `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, created_at`
 	return r.db.QueryRow(query, user.Username, user.Email, user.Password).Scan(&user.ID, &user.CreatedAt)
 }
 
