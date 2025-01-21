@@ -1,8 +1,10 @@
 package service
 
 import (
+	"errors"
 	"github.com/Maxim2710/golang-auth-lab/internal/database/repository"
 	"github.com/Maxim2710/golang-auth-lab/internal/models"
+	"github.com/Maxim2710/golang-auth-lab/pkg/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -34,4 +36,23 @@ func (s *AuthService) RegisterUser(username, email, password string) (*models.Us
 	user.Password = ""
 
 	return user, nil
+}
+
+func (s *AuthService) AuthenticateUser(email string, password string) (token string, err error) {
+	user, err := s.repo.GetUserByEmail(email)
+	if err != nil {
+		return "", errors.New("User not found")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return "", errors.New("Invalid password")
+	}
+
+	token, err = utils.GenerateToken(user.Email)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
