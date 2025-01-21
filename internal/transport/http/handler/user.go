@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -52,6 +53,8 @@ func (h *UserHandler) GetUserById(c *gin.Context) {
 
 func (h *UserHandler) UpdatePassword(c *gin.Context) {
 	token := c.GetHeader("Authorization")
+
+	token = strings.TrimPrefix(token, "Bearer ")
 	if token == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "token is required"})
 		return
