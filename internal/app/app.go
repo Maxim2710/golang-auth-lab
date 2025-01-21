@@ -3,6 +3,9 @@ package app
 import (
 	"github.com/Maxim2710/golang-auth-lab/internal/config"
 	"github.com/Maxim2710/golang-auth-lab/internal/database"
+	"github.com/Maxim2710/golang-auth-lab/internal/database/repository"
+	"github.com/Maxim2710/golang-auth-lab/internal/service"
+	"github.com/Maxim2710/golang-auth-lab/internal/transport/http"
 )
 
 func Run() error {
@@ -20,5 +23,10 @@ func Run() error {
 
 	defer db.Close()
 
-	return nil
+	authRepo := repository.NewAuthRepository(db)
+	authService := service.NewAuthService(authRepo)
+
+	router := http.SetupRouter(authService)
+
+	return router.Run("localhost:8080")
 }
