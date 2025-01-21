@@ -18,7 +18,8 @@ func SetupRouter(authService *service.AuthService, userService *service.UserServ
 	{
 		api.POST("/register", authHandler.RegisterUser)
 		api.POST("/login", authHandler.Login)
-		api.GET("/:id", userHandler.GetUserById)
+		api.GET("/users/:id", userHandler.GetUserById)
+		api.PUT("/users/update-password", userHandler.UpdatePassword)
 	}
 
 	return router
