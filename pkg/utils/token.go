@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"time"
 )
@@ -38,4 +39,13 @@ func ValidateToken(tokenString string) (*Claims, error) {
 	}
 
 	return claims, nil
+}
+
+func ParseToken(tokenString string) (string, error) {
+	claims, err := ValidateToken(tokenString)
+	if err != nil {
+		return "", errors.New("invalid token")
+	}
+
+	return claims.Email, nil
 }
