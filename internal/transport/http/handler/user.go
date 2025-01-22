@@ -74,3 +74,21 @@ func (h *UserHandler) UpdatePassword(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "password updated successfully"})
 }
+
+func (h *UserHandler) DeleteUser(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+
+	token = strings.TrimPrefix(token, "Bearer ")
+	if token == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "token is required"})
+		return
+	}
+
+	err := h.service.DeleteUser(token)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "user deleted successfully"})
+}
