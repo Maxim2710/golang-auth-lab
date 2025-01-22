@@ -47,3 +47,22 @@ func (s *UserService) UpdatePassword(token string, oldPassword string, newPasswo
 
 	return nil
 }
+
+func (s *UserService) DeleteUser(token string) error {
+	email, err := utils.ParseToken(token)
+	if err != nil {
+		return errors.New("invalid token")
+	}
+
+	user, err := s.repo.GetUserByEmail(email)
+	if err != nil || user == nil {
+		return errors.New("user not found")
+	}
+
+	err = s.repo.DeleteUserByEmail(email)
+	if err != nil {
+		return errors.New("failed to delete user")
+	}
+
+	return nil
+}
