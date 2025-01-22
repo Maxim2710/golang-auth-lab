@@ -32,3 +32,9 @@ func (r *UserRepository) UpdatePasswordByEmail(email string, newPassword string)
 	_, err := r.db.Exec(query, newPassword, email)
 	return err
 }
+
+func (r *UserRepository) DeleteUserByEmail(email string) error {
+	query := `DELETE FROM users WHERE email = $1`
+	_, err := r.db.Exec(query, email)
+	return err
+}
